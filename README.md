@@ -8,7 +8,7 @@ This is a Laravel-based To-Do application with user authentication and enhanced 
 
 Enhancements 
 
-### ✅ Authentication Input Validation
+Authentication Input Validation
 - Implemented **Form Request validation** for the **Login** and **Register** pages.
 - Enforced **regex validation rules**:
   - Names only accept alphabets (`A-Z`, `a-z`).
@@ -16,7 +16,7 @@ Enhancements
   - `StoreUserRequest`
   - `LoginUserRequest`
 
-### ✅ User Profile Features
+User Profile Features
 - Added support to update:
   - Nickname
   - Email
@@ -28,9 +28,9 @@ Enhancements
 
 ---
 
-## 📁 Files Modified or Added
+Files Modified or Added
 
-### 🧠 Model (`app/Models/User.php`)
+Model (`app/Models/User.php`)
 - **New fillable fields** added:
   - `nickname`
   - `phone`
@@ -39,7 +39,7 @@ Enhancements
 
 ---
 
-### 🎮 Controllers (`app/Http/Controllers/`)
+Controllers (`app/Http/Controllers/`)
 | File | Enhancements |
 |------|--------------|
 | `Auth/RegisterController.php` | Uses `StoreUserRequest` for form validation and formatting `start_at`, `password` |
@@ -49,9 +49,9 @@ Enhancements
 
 ---
 
-### 📄 Views (`resources/views/`)
+Views (`resources/views/`)
 
-#### Auth
+Auth
 - `auth/register.blade.php`
   - Added `@if($errors->any())` to display validation messages.
   - Integrated custom input validation using Form Request.
@@ -59,18 +59,18 @@ Enhancements
 - `auth/login.blade.php`
   - Same as register; added error feedback and form validation rules.
 
-#### Profile
+Profile
 - `profile/edit.blade.php` *(new)*
   - Form to update nickname, email, phone, city, avatar, password.
   - Display current avatar and file upload field.
   - Added delete account form.
 
-#### Layout
+Layout
 - Updated layout to show `nickname` instead of `name` in top-right user menu (if applicable).
 
 ---
 
-### 🌐 Routes (`routes/web.php`)
+Routes (`routes/web.php`)
 - Added routes for:
   ```php
   Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');

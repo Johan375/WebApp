@@ -1,4 +1,4 @@
-All the codes are in Master branch.
+All the codes are in Master branch
 
 Laravel To-Do App ( Input Validation and Profile Page )
 

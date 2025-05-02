@@ -20,6 +20,7 @@ Assignment 2
 - Login attempts are limited to 3 failed tries before being temporarily disabled to prevent brute force attacks.
 
 Assigmnent 1
+
 Authentication Input Validation
 - Implemented **Form Request validation** for the **Login** and **Register** pages.
 - Enforced **regex validation rules**:

@@ -5,9 +5,21 @@ Laravel To-Do App ( Input Validation and Profile Page )
 This is a Laravel-based To-Do application with user authentication and enhanced profile management features. Below are the enhancements and modifications made across the MVC structure of Laravel (Model, View, Controller).
 
 ---
+Assignment 2 
+1. Multi-Factor Authentication (MFA)
+- Implemented the Laravel Fortify package to provide MFA.
+- MFA is set to deliver verification codes via email.
+- After logging in, users are required to authenticate their identity using a code delivered to their email address.
 
-Enhancements 
+2. Password Hashing
+- Passwords are securely hashed using Laravel's built-in **Hash** facade.
+- The application uses Argon2 (configurable via `config/hashing.php`) to ensure strong password encryption.
 
+3. Rate Limiting
+- Implemented rate limiting using Laravel’s RateLimiter.
+- Login attempts are limited to 3 failed tries before being temporarily disabled to prevent brute force attacks.
+
+Assigmnent 1
 Authentication Input Validation
 - Implemented **Form Request validation** for the **Login** and **Register** pages.
 - Enforced **regex validation rules**:

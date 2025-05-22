@@ -12,15 +12,6 @@ Assignment 3
 - **Role Permissions**: Each role has specific permissions (e.g., `Create`, `Retrieve`, `Update`, `Delete`) stored in the `role_permissions` table.
 - **RBAC Enforcement**: Buttons and actions in the UI are shown or hidden based on the user's permissions.
 - **Admin Dashboard**: Admins can manage users, activate/deactivate accounts, and view To-Do tasks created by each user.
----
-
-## Table of Contents
-
-1. [Database Schema](#database-schema)
-2. [RBAC Implementation](#rbac-implementation)
-3. [Authorization Logic](#authorization-logic)
-4. [Blade Views](#blade-views)
-5. [Testing RBAC](#testing-rbac)
 
 ---
 

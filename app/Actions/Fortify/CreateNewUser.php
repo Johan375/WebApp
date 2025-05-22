@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 
+
 class CreateNewUser implements CreatesNewUsers
 {
     use PasswordValidationRules;
@@ -32,9 +33,10 @@ class CreateNewUser implements CreatesNewUsers
         ])->validate();
 
         return User::create([
-            'name' => $input['name'],
-            'email' => $input['email'],
-            'password' => Hash::make($input['password']),
-        ]);
+        'name' => $input['name'],
+        'email' => $input['email'],
+        'password' => Hash::make($input['password']),
+        'role' => 'user', // Set default role here
+    ]);
     }
 }

@@ -13,11 +13,15 @@ class TodoController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        $userId = Auth::user()->id;
-        $todos = Todo::where(['user_id' => $userId])->get();
-        return view('todo.list', ['todos' => $todos]);
-    }
+{
+    $user = auth()->user();
+    // Assuming you have a relationship: $user->role->permissions
+    $permissions = $user->role->permissions->pluck('Description')->toArray();
+
+    $todos = Todo::where('user_id', $user->id)->get();
+
+    return view('todo.index', compact('todos', 'permissions'));
+}
 
     /**
      * Show the form for creating a new resource.

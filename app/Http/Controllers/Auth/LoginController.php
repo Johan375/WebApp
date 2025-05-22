@@ -31,6 +31,17 @@ class LoginController extends Controller
      protected $redirectTo = '/todo';
 
     /**
+     * Redirect users after login based on their role.
+     */
+    protected function authenticated($request, $user)
+    {
+        if ($user->role === 'admin') {
+            return redirect('/admin');
+        }
+        return redirect('/todo');
+    }
+
+    /**
      * Create a new controller instance.
      *
      * @return void

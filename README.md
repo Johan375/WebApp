@@ -5,47 +5,165 @@ Laravel To-Do App ( Input Validation and Profile Page )
 This is a Laravel-based To-Do application with user authentication and enhanced profile management features. Below are the enhancements and modifications made across the MVC structure of Laravel (Model, View, Controller).
 
 ---
+
 Assignment 3
-Features
-- User Roles: Users are assigned roles (admin or user) stored in the user_roles table.
-- Role Permissions: Each role has specific permissions (e.g., Create, Retrieve, Update, Delete) stored in the role_permissions table.
-- RBAC Enforcement: Buttons and actions in the UI are shown or hidden based on the user's permissions.
-- Admin Dashboard: Admins can manage users, activate/deactivate accounts, and view To-Do tasks created by each user.
+# Features
+- **User Roles**: Users are assigned roles (`admin` or `user`) stored in the `user_roles` table.
+- **Role Permissions**: Each role has specific permissions (e.g., `Create`, `Retrieve`, `Update`, `Delete`) stored in the `role_permissions` table.
+- **RBAC Enforcement**: Buttons and actions in the UI are shown or hidden based on the user's permissions.
+- **Admin Dashboard**: Admins can manage users, activate/deactivate accounts, and view To-Do tasks created by each user.
+---
 
-Table of Contents
-1. Database Schema
-2. RBAC Implementation
-3. Authorization Logic
-4. Blade Views
-5. Testing RBAC
+## Table of Contents
 
-Database Schema
-1. user_roles Table
-This table stores the roles assigned to users, including columns for the role ID, user ID, role name, and an optional description.
+1. [Database Schema](#database-schema)
+2. [RBAC Implementation](#rbac-implementation)
+3. [Authorization Logic](#authorization-logic)
+4. [Blade Views](#blade-views)
+5. [Testing RBAC](#testing-rbac)
 
-2. role_permissions Table
-This table stores the permissions associated with each role, including columns for the permission ID, role ID, and a description of the permission (e.g., Create, Retrieve, Update, Delete).
+---
 
-RBAC Implementation
-1. Middleware for Role Checking
-A custom middleware ensures that only users with the correct role can access specific routes. Unauthorized users are redirected to a default page or shown an error.
+## Database Schema
 
-2. Route Protection
-Routes are grouped and protected using middleware. For example, routes for To-Do tasks are accessible only to users with the user role, while admin routes are restricted to users with the admin role.
+### 1. `user_roles` Table
+This table stores the roles assigned to users.
 
-Authorization Logic
-1. Controller Logic
-Controllers pass the user's permissions to the Blade views. This ensures that the views can dynamically show or hide buttons and actions based on the user's permissions.
+| Column       | Type         | Description                     |
+|--------------|--------------|---------------------------------|
+| `RoleID`     | Primary Key  | Unique identifier for the role. |
+| `UserID`     | Foreign Key  | Links to the `users` table.     |
+| `RoleName`   | String       | Name of the role (e.g., `admin`, `user`). |
+| `Description`| String       | Optional description of the role. |
 
-Blade Views
-1. index.blade.php
-This view displays the list of To-Do items and enforces RBAC for buttons like "New List," "Edit," and "Delete."
+### 2. `role_permissions` Table
+This table stores the permissions associated with each role.
 
-2. add.blade.php
-This view provides a form for creating a new To-Do item. The form is accessible only to users with the Create permission.
+| Column         | Type         | Description                     |
+|----------------|--------------|---------------------------------|
+| `PermissionID` | Primary Key  | Unique identifier for the permission. |
+| `RoleID`       | Foreign Key  | Links to the `user_roles` table. |
+| `Description`  | String       | Permission type (e.g., `Create`, `Retrieve`, `Update`, `Delete`). |
 
-3. dashboard.blade.php
-This view serves as the admin dashboard, where admins can manage users and view their To-Do tasks.
+---
+
+## RBAC Implementation
+
+### 1. Middleware for Role Checking
+The `RoleMiddleware` ensures that only users with the correct role can access specific routes.
+
+```php
+// filepath: app/Http/Middleware/RoleMiddleware.php
+public function handle($request, Closure $next, $role)
+{
+    if (!Auth::check() || Auth::user()->role !== $role) {
+        return redirect('/'); // Redirect unauthorized users
+    }
+    return $next($request);
+}
+```
+
+### 2. Route Protection
+Routes are grouped and protected using the `auth` and `role` middleware.
+
+```php
+// filepath: routes/web.php
+Route::middleware(['auth', 'role:user'])->group(function () {
+    Route::resource('/todo', TodoController::class);
+});
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
+});
+```
+
+---
+
+## Authorization Logic
+
+### 1. Controller Logic
+The `TodoController` passes the user's permissions to the Blade view.
+
+```php
+// filepath: app/Http/Controllers/TodoController.php
+public function index()
+{
+    $user = auth()->user();
+    $permissions = $user->role->permissions->pluck('Description')->toArray();
+    $todos = Todo::where('user_id', $user->id)->get();
+
+    return view('todo.index', compact('todos', 'permissions'));
+}
+```
+
+### 2. Blade View Logic
+The `index.blade.php` file shows or hides buttons based on the user's permissions.
+
+```php
+// filepath: resources/views/todo/index.blade.php
+@if(in_array('Create', $permissions))
+    <a href="{{ route('todo.create') }}" class="btn btn-primary">New List</a>
+@endif
+
+@foreach($todos as $todo)
+    @if(in_array('Update', $permissions))
+        <a href="{{ route('todo.edit', $todo) }}" class="btn btn-warning">Edit</a>
+    @endif
+
+    @if(in_array('Delete', $permissions))
+        <form action="{{ route('todo.destroy', $todo) }}" method="POST">
+            @csrf
+            @method('DELETE')
+            <button class="btn btn-danger">Delete</button>
+        </form>
+    @endif
+@endforeach
+```
+
+---
+
+## Blade Views
+
+### 1. `index.blade.php`
+Displays the list of To-Do items and enforces RBAC for buttons.
+
+### 2. `add.blade.php`
+Form for creating a new To-Do item.
+
+```php
+// filepath: resources/views/todo/add.blade.php
+<form action="{{ route('todo.store') }}" method="POST">
+    @csrf
+    <div class="form-group">
+        <label for="title">Title:</label>
+        <input type="text" class="form-control" id="title" name="title">
+    </div>
+    <div class="form-group">
+        <label for="description">Description:</label>
+        <textarea name="description" class="form-control" id="description"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+```
+
+---
+
+## Testing RBAC
+
+1. **Assign Roles and Permissions**:
+   - Assign roles (`admin`, `user`) to users in the `user_roles` table.
+   - Assign permissions (`Create`, `Retrieve`, `Update`, `Delete`) to roles in the `role_permissions` table.
+
+2. **Login as a User**:
+   - Test with a user who has limited permissions (e.g., only `Create`).
+   - Verify that only the "New List" button is visible.
+
+3. **Login as an Admin**:
+   - Test with an admin user who has full permissions.
+   - Verify that all buttons (Create, Edit, Delete) are visible.
+
+---
 
 
 ---

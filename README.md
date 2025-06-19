@@ -6,6 +6,13 @@ This is a Laravel-based To-Do application with user authentication and enhanced 
 
 ---
 
+Assignment 4
+# Features
+- **Content Security Policy (CSP)**: CSP is implemented to restrict the sources of scripts, styles, and other resources, ensuring compliance with the Same-Origin Policy. This prevents unauthorized scripts from executing and mitigates XSS attacks.
+- **Cross-Site Scripting (XSS) Defenses**: XSS is implemented to prevent XSS attacks using Laravel's built-in output escaping and input validation mechanisms.
+- **Cross-Site Request Forgery (CSRF) Protection**: CSRF tokens are included in all forms and AJAX requests to ensure that requests are legitimate and originate from authenticated users
+---
+
 Assignment 3
 # Features
 - **User Roles**: Users are assigned roles (`admin` or `user`) stored in the `user_roles` table.

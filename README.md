@@ -1,6 +1,6 @@
 All the codes are in Master branch
 
-Laravel To-Do App ( Input Validation and Profile Page )
+Laravel To-Do App 
 
 This is a Laravel-based To-Do application with user authentication and enhanced profile management features. Below are the enhancements and modifications made across the MVC structure of Laravel (Model, View, Controller).
 
